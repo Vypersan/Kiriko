@@ -6,3 +6,6 @@ Made by the community for the community, this discord bot is ready to protect yo
 # Developers:
 Little-Fox#4108 (Aka me)
 [Personal website](https://little-fox.info)
+
+# Profile Picture (pfp) Origin:
+[Kiriko animated short](https://www.youtube.com/watch?v=9acxn7qAST4)
