@@ -5,5 +5,6 @@ modules = [
     "Core.moderation",
     "Core.botinfo",
     "Core.listeners",
-    "Core.userinfo"
+    "Core.userinfo",
+    "fun.sfx"
 ]
