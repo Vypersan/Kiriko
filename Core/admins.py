@@ -49,7 +49,7 @@ class Reports(discord.ui.Modal, title = "User report form.",):
             utilities.print_exception_msg(f"Failed to set url image for the  report. {discord.errors.HTTPException}. Replaced it with defaultwxx" )
             embed.set_image(url="https://cdn.discordapp.com/attachments/1110889660705689631/1110900776630489149/header.png")
             await report_channel.send(embed=embed)
-        return await interaction.response.send_message("Thanks for your report! We received it.")
+        return await interaction.response.send_message("Thanks for your report! We received it.", ephemeral=True)
     
     async def on_error(self, interaction: discord.Interaction, error: Exception) -> None:
         print(error)
