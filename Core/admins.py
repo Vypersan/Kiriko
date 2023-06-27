@@ -202,6 +202,11 @@ class admins(commands.Cog):
     @utilities.check_blacklist()
     async def feedback(self, interaction: discord.Interaction):
         await interaction.response.send_modal(Feedback())
+    
+    @app_commands.command(name="reportuser", description="Report a user for breaking rules")
+    @utilities.check_blacklist()
+    async def reportuser(self, interaction : discord.Interaction):
+        await interaction.response.send_modal(Reports())
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction: discord.Interaction):
