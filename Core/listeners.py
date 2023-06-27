@@ -15,8 +15,14 @@ class eventlist(commands.Cog):
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction: discord.Interaction):
-        utils.write_log(f"[{current_date_pretty}]    {interaction.command.name} issued by {interaction.user}")
-        utils.print_info_line(f"{interaction.command.name} issued by {interaction.user}")
+        try:
+            utils.write_log(f"[{current_date_pretty}]    {interaction.command.name} issued by {interaction.user}")
+        except AttributeError:
+            pass
+        try:
+            utils.print_info_line(f"{interaction.command.name} issued by {interaction.user}")
+        except AttributeError:
+            pass
 
     
     @commands.Cog.listener()

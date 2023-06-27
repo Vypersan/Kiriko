@@ -35,7 +35,7 @@ class Reports(discord.ui.Modal, title = "User report form.",):
             reporteduser = await interaction.client.fetch_user(self.userid)
         except discord.errors.HTTPException:
             return await interaction.response.send_message("Please provide a valid user ID", ephemeral=True)
-        report_channel = await interaction.client.fetch_channel(1110895799904247899)
+        report_channel = await interaction.client.fetch_channel(1123173289410428939)
         embed = discord.Embed(title=f"New user  report by {interaction.user}", color= discord.Color.red())
         embed.add_field(name="User", value= f"{reporteduser.mention} ({reporteduser.id})", inline=False)
         embed.add_field(name="Description", value=self.report, inline=False)
