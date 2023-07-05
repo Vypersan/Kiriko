@@ -6,5 +6,6 @@ modules = [
     "Core.botinfo",
     "Core.listeners",
     "Core.userinfo",
+    "Core.aboutdevs",
     "fun.sfx"
 ]
