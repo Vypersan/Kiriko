@@ -15,13 +15,14 @@ class userinfo(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name="av", description="Get an user's avatar")
+    @app_commands.describe(member = "the " )
     async def av(self, interaction: discord.Interaction, member: discord.Member = None):
         if member is None:
             member = interaction.user
         await interaction.response.send_message(member.avatar.url, ephemeral=False)
 
     @app_commands.command(name="whois", description="Get user information")
-    async def whois(self, interaction: discord.Interaction, user: discord.Member = None):
+    async def whois(self, interaction: discord.Interaction, user: discord.Member):
         """Check to see who this person is, their roles and other stuff. format: whois @user"""
         if user is None:
             user = interaction.user
@@ -34,7 +35,7 @@ class userinfo(commands.Cog):
             name="Joined", value=user.joined_at.strftime(date_format))
         members = sorted(interaction.guild.members, key=lambda m: m.joined_at)
         embed.add_field(name="Join position",
-                        value=str(members.index(user) + 1))
+                        value=str(members.index(user)))
         embed.add_field(name="Registered",
                         value=user.created_at.strftime(date_format))
 
