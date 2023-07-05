@@ -35,7 +35,7 @@ class Reports(discord.ui.Modal, title = "User report form.",):
             reporteduser = await interaction.client.fetch_user(self.userid)
         except discord.errors.HTTPException:
             return await interaction.response.send_message("Please provide a valid user ID", ephemeral=True)
-        report_channel = await interaction.client.fetch_channel(1110895799904247899)
+        report_channel = await interaction.client.fetch_channel(1123173289410428939)
         embed = discord.Embed(title=f"New user  report by {interaction.user}", color= discord.Color.red())
         embed.add_field(name="User", value= f"{reporteduser.mention} ({reporteduser.id})", inline=False)
         embed.add_field(name="Description", value=self.report, inline=False)
@@ -49,7 +49,7 @@ class Reports(discord.ui.Modal, title = "User report form.",):
             utilities.print_exception_msg(f"Failed to set url image for the  report. {discord.errors.HTTPException}. Replaced it with defaultwxx" )
             embed.set_image(url="https://cdn.discordapp.com/attachments/1110889660705689631/1110900776630489149/header.png")
             await report_channel.send(embed=embed)
-        return await interaction.response.send_message("Thanks for your report! We received it.")
+        return await interaction.response.send_message("Thanks for your report! We received it.", ephemeral=True)
     
     async def on_error(self, interaction: discord.Interaction, error: Exception) -> None:
         print(error)
@@ -202,6 +202,11 @@ class admins(commands.Cog):
     @utilities.check_blacklist()
     async def feedback(self, interaction: discord.Interaction):
         await interaction.response.send_modal(Feedback())
+    
+    @app_commands.command(name="reportuser", description="Report a user for breaking rules")
+    @utilities.check_blacklist()
+    async def reportuser(self, interaction : discord.Interaction):
+        await interaction.response.send_modal(Reports())
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction: discord.Interaction):

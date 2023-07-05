@@ -34,6 +34,10 @@ class botinfo(commands.Cog):
         await interaction.response.send_message(embed=embed)
         utilities.write_log(f"[{logname}]    {interaction.user} Requested bot information.")
 
+    @app_commands.command(name="help", description="Get a list of all commands and how to use them.")
+    @utilities.check_blacklist()
+    async def help(self, interaction : discord.Interaction):
+        return await interaction.response.send_message("You can find all commands at [Our documentation](<https://little-fox.info/kirikobot-documentation>)")
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(botinfo(bot))
