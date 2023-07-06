@@ -6,7 +6,7 @@ import discord
 from discord import app_commands
 from colorama import Fore
 from datetime import datetime
-bot_version = "0.1.2"
+bot_version = "0.1.3"
 logname = datetime.now()
 logname_pretty = logname.strftime("%d-%m-%Y")
 async def connect_database():

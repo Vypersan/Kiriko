@@ -181,5 +181,68 @@ class serverowners(commands.Cog):
                 pass
 
 
+    @app_commands.command(name="serversetup", description="Set up the bot to work with your server")
+    @utils.check_blacklist()
+    @commands.has_permissions(kick_members=True)
+    async def serversetup(self, interaction : discord.Interaction , userlogs:discord.TextChannel, messagelogs:discord.TextChannel, welcomechannel:discord.TextChannel):
+        db = await utils.connect_database()
+        await db.execute("CREATE TABLE IF NOT EXISTS welcome (guildID INTEGER UNIQUE, welcomechannel TEXT)")
+        await db.commit()
+        try:
+            await db.execute("INSERT INTO welcome VALUES (?, ?)", (interaction.guild.id, welcomechannel.id,))
+        except aiosqlite.IntegrityError:
+            await db.execute("INSERT INTO logchannels VALUES (?, ?, ?)", (interaction.guild.id, messagelogs.id, userlogs.id,))
+            await db.commit()
+            try:
+                await db.close()
+            except ValueError:
+                pass
+            return await interaction.response.send_message(f"🦊Set your user logs to {userlogs.mention} and message log to {messagelogs.mention} but this server already has a welcome message channel. `use /editwelcome` instead!")
+        await db.commit()
+        embedVar = discord.Embed(title='Server Setup', color=discord.Color.green())
+        try:
+            await db.execute("INSERT INTO logchannels VALUES (?, ?, ?)", (interaction.guild.id, messagelogs.id, userlogs.id,))
+        except aiosqlite.IntegrityError:
+            try:
+                await db.close()
+            except ValueError:
+                pass
+            return await interaction.response.send_message("🦊 Set your welcome channel. However this server already has log channels set up. Use `/editlogs` instead")
+        embedVar.add_field(name="Welcome channel", value=welcomechannel.mention, inline=False)
+        embedVar.add_field(name="User log channel", value=userlogs.mention, inline=False)
+        embedVar.add_field(name="Message log channel", value=messagelogs.mention, inline=False)
+        await db.commit()
+        try:
+            await db.close()
+        except ValueError:
+            pass
+        return await interaction.response.send_message(embed=embedVar)
+
+
+    @app_commands.command(name="editwelcome", description="Edit the welcome channel")
+    @utils.check_blacklist()
+    @commands.has_permissions(kick_members=True)
+    async def editlogs(self, interaction : discord.Interaction, welcomechannel:discord.TextChannel):
+        db = await utils.connect_database()
+        await db.execute("DELETE FROM welcome WHERE guildID = ?", (interaction.guild.id,))
+        await db.commit()
+        await db.execute("INSERT INTO welcome VALUES (?, ?)", (interaction.guild.id, welcomechannel.id,))
+        await db.commit()
+        try:
+            await db.close()
+        except ValueError:
+            pass
+        return await interaction.response.send_message(f"🦊 Set your new welcome channel to {welcomechannel.mention}")
+    
+    @commands.Cog.listener()
+    async def on_serversetup_error(self, interaction : discord.Interaction, error: app_commands.CommandInvokeError):
+        if isinstance(error, app_commands.CheckFailure):
+            return await interaction.response.send_message("🦊 Sorry you do not have enough permissions to use this command.", ephemeral=True)
+
+    @commands.Cog.listener()
+    async def on_editlogs_error(self, interaction : discord.Interaction, error: app_commands.CommandInvokeError):
+        if isinstance(error, app_commands.CheckFailure):
+            return await interaction.response.send_message("🦊 Sorry you do not have enough permissions to use this command.", ephemeral=True)
+
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(serverowners(bot))
