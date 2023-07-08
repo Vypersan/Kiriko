@@ -116,7 +116,7 @@ class eventlist(commands.Cog):
         logchannel_result = await logchannel.fetchone()
         try:
             send_to_channel = await self.bot.fetch_channel(logchannel_result[0])
-        except discord.errors.NotFound:
+        except TypeError:
             try:
                 await db.close()
             except ValueError:
@@ -142,7 +142,7 @@ class eventlist(commands.Cog):
         logchannel_result = await logchannel.fetchone()
         try:
             send_to_channel = await self.bot.fetch_channel(logchannel_result[0])
-        except discord.errors.NotFound:
+        except TypeError:
             try:
                 await db.close()
             except ValueError:
@@ -170,7 +170,7 @@ class eventlist(commands.Cog):
         logchannel_result = await logchannel.fetchone()
         try:
             send_to_channel = await self.bot.fetch_channel(logchannel_result[0])
-        except discord.errors.NotFound:
+        except TypeError:
             try:
                 await db.close()
             except ValueError:
