@@ -16,6 +16,8 @@ appID = loader["appID"]
 intents = discord.Intents.default()
 intents.message_content = True
 intents.messages = True
+intents.members = True
+intents.moderation = True
 # Normal server 981259218122338354  |||||| Dev server 1038431009676460082
 MY_GUILD = discord.Object(id=1038431009676460082)
 
