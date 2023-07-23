@@ -38,6 +38,7 @@ class aboutdevs(commands.Cog):
     async def contribs(self, interaction : discord.Interaction):
         embed = discord.Embed(title="Contributors", color = discord.Color.red())
         embed.add_field(name="foxigoose", value="audio files for sfx command. [Their twitter](https://twitter.com/LoxiGoose)", inline=False)
+        embed.add_field(name="catsonmarss", value = "New command ideas [Their twitter](https://twitter.com/catsonmarss)")
         return await interaction.response.send_message(embed=embed)
 
 

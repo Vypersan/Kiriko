@@ -7,5 +7,6 @@ modules = [
     "Core.listeners",
     "Core.userinfo",
     "Core.aboutdevs",
-    "fun.sfx"
+    "fun.sfx",
+    "reminder.reminder"
 ]

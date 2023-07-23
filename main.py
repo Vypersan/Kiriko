@@ -12,14 +12,21 @@ from sqlite3 import IntegrityError as duplicate_error
 loader = jlload(assets.jsonfile)
 token = loader["token"]
 invite = loader["invite_url"]
-appID = loader["appID"]
 intents = discord.Intents.default()
 intents.message_content = True
 intents.messages = True
 intents.members = True
 intents.moderation = True
+parser = ArgumentParser(description="The console that allows the bot to run in certain modes")
+parser.add_argument("--developer", action="store_true", help="Run the bot in developer mode.")
+args = parser.parse_args()
 # Normal server 981259218122338354  |||||| Dev server 1038431009676460082
 MY_GUILD = discord.Object(id=1038431009676460082)
+
+if args.developer:
+    appID = loader["devID"]
+else:
+    appID= loader["appID"]
 
 
 async def prefix_adder(guild):
@@ -69,7 +76,12 @@ class kiriko(commands.Bot):
         for guild in kirikobot.guilds:
             await prefix_adder(guild)
         await kirikobot.change_presence(activity=discord.Game(name="Cleaning the shrine"))
-        utils.print_info_line(invite)
+        if args.developer:
+            dev_invite = loader["dev_url"]
+            utils.print_info_line(dev_invite)
+            utils.print_info_line("Running bot in developer mode.")
+        else:
+            utils.print_info_line(invite)
         utils.print_info_line("Loaded everything and bot is online.")
         utils.write_log(f"Bot started on {utils.logname_pretty}")
 
@@ -131,4 +143,8 @@ async def on_app_command_error(interaction : discord.Interaction, error: discord
 
 
 if __name__ == "__main__":
-    kirikobot.run(token)
+    if args.developer:
+        developer_token = loader["devtoken"]
+        kirikobot.run(developer_token)
+    else:
+        kirikobot.run(token)

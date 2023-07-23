@@ -114,6 +114,8 @@ class eventlist(commands.Cog):
         db = await utils.connect_database()
         logchannel = await db.execute("SELECT users FROM logchannels WHERE guildid = ?", (member.guild.id,))
         logchannel_result = await logchannel.fetchone()
+        welcome_channel = await db.execute("SELECT welcomechannel FROM welcome WHERE guildID = ?", (member.guild.id,))
+        welcome_channel_result = await welcome_channel.fetchone()
         try:
             send_to_channel = await self.bot.fetch_channel(logchannel_result[0])
         except TypeError:
@@ -122,11 +124,20 @@ class eventlist(commands.Cog):
             except ValueError:
                 pass
             return
+        await send_to_channel.send(embed=join_embed)
+        try:
+            welcome_send = await self.bot.fetch_channel(welcome_channel_result[0])
+        except  ValueError:
+            try:
+                await db.close()
+            except ValueError:
+                pass
+            return
+        await welcome_send.send(f"🦊 Hey {member.mention} Welcome to {member.guild.name} 🦊")
         try:
             await db.close()
         except ValueError:
             pass
-        return await send_to_channel.send(embed=join_embed)
 
     @commands.Cog.listener()
     async def on_member_remove(self, member:discord.Member):
