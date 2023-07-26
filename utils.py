@@ -9,6 +9,7 @@ from datetime import datetime
 bot_version = "0.1.3"
 logname = datetime.now()
 logname_pretty = logname.strftime("%d-%m-%Y")
+current_date_pretty = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 async def connect_database():
     return await aiosqlite.connect("./database.db")
 
@@ -84,7 +85,7 @@ async def get_prefix(_bot, message):
 def write_log(message):
     """Writes information to the log file of the current day."""
     with open(f"./logs/{logname_pretty}.log", "a+") as f:
-        f.writelines(message + "\n")
+        f.writelines(f"[{current_date_pretty}]    {message}\n")
         f.close()
     print(Fore.GREEN + "[INFO]    "+ Fore.RESET +"Saved log information")
 

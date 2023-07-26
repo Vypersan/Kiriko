@@ -3,6 +3,7 @@ from sqlite3 import IntegrityError
 import discord
 from discord import app_commands
 from discord.ext import commands
+from discord.app_commands import Choice
 import utils as utilities
 process = "Starting task {}/2"
 current_date_pretty = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -228,7 +229,11 @@ class admins(commands.Cog):
             return
         else:
             if message_check:
-                await interaction.channel.send(f"Hey <@{interaction.user.id}> you have an unread message from developers! Use </inbox:1108364561419096140> to read it.",)
+                try:
+                    await interaction.response.send_message(f"Hey <@{interaction.user.id}> you have an unread message from developers! Use </inbox:1108364561419096140> to read it.", ephemeral=True)
+                except Exception as e: 
+                    await utilities.print_exception_msg(e)
+                    
             else:
                 return
         try:
@@ -286,6 +291,13 @@ class admins(commands.Cog):
             pass
         await interaction.response.send_message("Done!", ephemeral=True)
 
+
+    @app_commands.command(name="setpresence", description="Dev only command")
+    @utilities.is_bot_admin()
+    async def setpr(self, interaction : discord.Interaction, streamer_name:str, video_url:str):
+        streaming_service_stat = discord.Streaming(name=streamer_name, url=video_url, platform = "YouTube")
+        await self.bot.change_presence(activity=streaming_service_stat)
+        return await interaction.response.send_message("🦊 Changed my status!", ephemeral=True)
     
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(admins(bot))
