@@ -27,7 +27,7 @@ if args.developer:
     appID = loader["devID"]
 else:
     appID= loader["appID"]
-
+    
 
 async def prefix_adder(guild):
     db = await utils.connect_database()
@@ -59,8 +59,8 @@ async def get_prefix(bot, message):
 
 class kiriko(commands.Bot):
     """The main bot class"""
-    def __init__(self, intents = intents):
-        super().__init__(intents=intents, command_prefix =  get_prefix, application_id = appID, description="Let the kitsune guide you")
+    def __init__(self, intents = intents,):
+        super().__init__(intents=intents, command_prefix =  get_prefix, application_id = appID, description="Let the kitsune guide you",)
     
     async def setup_hook(self) -> None:
         self.tree.copy_global_to(guild=MY_GUILD)
@@ -75,7 +75,6 @@ class kiriko(commands.Bot):
             utils.write_log(f'Loaded {extension}')
         for guild in kirikobot.guilds:
             await prefix_adder(guild)
-        await kirikobot.change_presence(activity=discord.Game(name="Cleaning the shrine"))
         if args.developer:
             dev_invite = loader["dev_url"]
             utils.print_info_line(dev_invite)
@@ -87,7 +86,7 @@ class kiriko(commands.Bot):
 
 
 
-kirikobot = kiriko(intents= intents)
+kirikobot = kiriko(intents= intents,)
 kirikobot.remove_command("help")
 tree = kirikobot.tree
 

@@ -41,6 +41,5 @@ class aboutdevs(commands.Cog):
         embed.add_field(name="catsonmarss", value = "New command ideas [Their twitter](https://twitter.com/catsonmarss)")
         return await interaction.response.send_message(embed=embed)
 
-
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(aboutdevs(bot))

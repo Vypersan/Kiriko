@@ -133,7 +133,8 @@ class eventlist(commands.Cog):
             except ValueError:
                 pass
             return
-        await welcome_send.send(f"🦊 Hey {member.mention} Welcome to {member.guild.name} 🦊")
+         # "Hey there! Welcome to [server name]. Thanks for joining us, it's great to have you here!
+        await welcome_send.send(f"🦊 Hey there {member.mention}! Welcome to {member.guild.name}. Thanks for joining us, it's great to have you here!.")
         try:
             await db.close()
         except ValueError:
