@@ -126,7 +126,7 @@ class moderation(commands.Cog):
         except sqlite3.Connection.Error as e:
             print(f"Connection Closed {e}\n")
             pass
-        await interaction.response.send_message(f"Logged and Banned ✅ {member}")
+        await interaction.response.send_message(f"Uh hello? Okay that is it, Banned {member} cause they are annoying and no one likes them. Next!")
         try:
             await member.send(f"Hey {member.display_name} You got banned in **{interaction.guild.name}** for: \n**{reason}**")
         except discord.errors.Forbidden:
@@ -193,7 +193,7 @@ class moderation(commands.Cog):
                     await database.close()
                     embed = utilities.create_simple_embed("Muted", discord.Color.blue(
                     ), f"Muted {member.display_name}", f"✅Muted user {member.name}#{member.discriminator} for **{reason}**")
-                    utilities.print_info_line(f"Muted {member} for {time}")
+                    utilities.print_info_line(f"You know, everyone is chill here except {member}, So they are getting some... Quiet time for {time}")
                     utilities.write_log(f"[{current_date_pretty}]    Mute issued by {interaction.user} towards {member} and lasts {time}")
                     try:
                         await member.send(f"You got muted in **{interaction.guild.name}** for {reason} and lasts. {time}.")

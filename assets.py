@@ -8,5 +8,6 @@ modules = [
     "Core.userinfo",
     "Core.aboutdevs",
     "fun.sfx",
-    "reminder.reminder"
+    "reminder.reminder",
+    "economy.economy"
 ]

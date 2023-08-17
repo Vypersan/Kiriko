@@ -37,7 +37,7 @@ class botinfo(commands.Cog):
     @app_commands.command(name="help", description="Get a list of all commands and how to use them.")
     @utilities.check_blacklist()
     async def help(self, interaction : discord.Interaction):
-        return await interaction.response.send_message("You can find all commands at [Our documentation](<https://little-fox.info/kirikobot-documentation>)")
+        return await interaction.response.send_message("You can find all commands at [Our documentation](<https://yokaigroup.gg/partners/little_fox/projects/kiriko-bot/documentation/)")
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(botinfo(bot))
