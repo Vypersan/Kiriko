@@ -130,6 +130,8 @@ class admins(commands.Cog):
             await database.commit()
             await database.execute("CREATE TABLE IF NOT EXISTS blacklist (memberid INTEGER UNIQUE, name TEXT, number TEXT, reason TEXT, duration TEXT)")
             await database.commit()
+            await database.execute("CREATE TABLE IF NOT EXISTS economy (userid INTEGER PRIMARY KEY, balance TEXT)")
+            await database.commit()
             await message.edit(content=process.format("2"))
         except Exception as e:
             return await ctx.send(f"Could not complete task 1 because of \n{e}")

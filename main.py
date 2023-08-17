@@ -8,6 +8,7 @@ from discord.ext import commands
 from discord.ext.commands import Context, Greedy
 from discord import app_commands
 import sqlite3
+import logging
 from sqlite3 import IntegrityError as duplicate_error
 loader = jlload(assets.jsonfile)
 token = loader["token"]
@@ -19,6 +20,7 @@ intents.members = True
 intents.moderation = True
 parser = ArgumentParser(description="The console that allows the bot to run in certain modes")
 parser.add_argument("--developer", action="store_true", help="Run the bot in developer mode.")
+parser.add_argument("--disablelog", action="store_true",help="Disable the custom logging system.")
 args = parser.parse_args()
 # Normal server 981259218122338354  |||||| Dev server 1038431009676460082
 MY_GUILD = discord.Object(id=1038431009676460082)
@@ -130,20 +132,18 @@ async def on_guild_join(guild:discord.Guild):
     await prefix_adder(guild)
     botowner = await kirikobot.fetch_user(521028748829786134)
 
-@tree.error
-async def on_app_command_error(interaction : discord.Interaction, error: discord.app_commands.errors.AppCommandError):
-    if isinstance(error, discord.app_commands.errors.CheckFailure):
-        if str(interaction.command.checks.copy()).__contains__("check_blacklist"):
-            await interaction.response.send_message("You are blacklisted. Please read our terms of service to appeal. <https://little-fox.info/general-bot-terms-of-service>", ephemeral=True)
-        if str(interaction.command.checks.copy().__contains__("has_permissions")):
-            await interaction.response.send_message("Sorry you do not have permissions to do this!", ephemeral=True)
-    else:
-        print(error)
 
+handler = discord.utils.setup_logging(level=logging.WARNING, root=False)
 
 if __name__ == "__main__":
     if args.developer:
         developer_token = loader["devtoken"]
-        kirikobot.run(developer_token)
+        if args.disablelog:
+            kirikobot.run(developer_token)
+        else:
+            kirikobot.run(developer_token, log_handler=handler)
     else:
-        kirikobot.run(token)
+        if args.disablelog:
+            kirikobot.run(token)
+        else:
+            kirikobot.run(token, log_handler=handler)

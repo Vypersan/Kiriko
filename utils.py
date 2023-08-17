@@ -6,7 +6,7 @@ import discord
 from discord import app_commands
 from colorama import Fore
 from datetime import datetime
-bot_version = "0.1.3"
+bot_version = "0.1.5"
 logname = datetime.now()
 logname_pretty = logname.strftime("%d-%m-%Y")
 current_date_pretty = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -40,6 +40,30 @@ def is_bot_developer(member_id):
             return True
     except ValueError:
         pass
+
+
+def check_premium():
+    async def prepremium(interaction : discord.Interaction):
+        if is_premium_guild(interaction.guild.id):
+            return True
+        return False
+    return app_commands.check(prepremium)
+        
+
+def is_premium_guild(guildid):
+    database = sqlite3.connect("./database.db")
+    try:
+        list_premium = database.execute("SELECT * FROM premiumservers WHERE guildid = ?", (guildid,))
+        return_premium = list_premium.fetchall()
+        if return_premium:
+            database.close()
+            return True
+        else:
+            return False
+    except ValueError:
+        pass
+
+
 
 def check_blacklist():
     async def precheck(interaction : discord.Interaction):
