@@ -4,6 +4,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 from discord.app_commands import Choice
+import sys
 import utils as utilities
 process = "Starting task {}/2"
 current_date_pretty = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -109,6 +110,8 @@ class admins(commands.Cog):
             await interaction.response.send_message(f"{type(e).__name__} - {e}")
         else:
             await interaction.response.send_message(f"Reloaded `{_module}`")
+
+
 
     @commands.command(name="dbsetup")
     @utilities.is_bot_admin()

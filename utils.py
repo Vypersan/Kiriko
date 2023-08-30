@@ -6,11 +6,14 @@ import discord
 from discord import app_commands
 from colorama import Fore
 from datetime import datetime
-bot_version = "0.1.5"
+bot_version = "0.1.6"
 logname = datetime.now()
 logname_pretty = logname.strftime("%d-%m-%Y")
 current_date_pretty = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
+
 async def connect_database():
+    """Make a connection with the database."""
     return await aiosqlite.connect("./database.db")
 
 
