@@ -27,7 +27,7 @@ class aboutdevs(commands.Cog):
             embed.add_field(name="Nationality", value="Netherlands / Dutch", inline=False)
             embed.add_field(name="About", value="20 year old programmer who loves to create a bunch of projects.", inline=False)
             embed.add_field(name="Hobbies", value="- Programming\n- Playing video games\n- Photography", inline=False)
-            embed.add_field(name="Links", value="[Website](https://yokaigroup.gg/members/little_fox/)", inline=False)
+            embed.add_field(name="Links", value="[Website](https://yokaigroup.gg/)", inline=False)
             embed.set_thumbnail(url=member.avatar.url)
         else:
             embed.description = "No developer provided"
