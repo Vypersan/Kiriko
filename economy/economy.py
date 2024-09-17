@@ -4,10 +4,11 @@ import discord
 from discord import app_commands
 from discord.app_commands import Choice
 from discord.ext import commands
-from economy.econgen import random_balance
+from economy.econgen import random_balance, random_mission_loss, random_mission_won, mission_result, mission_loss_text, mission_won_text
 import economy.econgen as eg
 import datetime
 import humanize
+import asyncio
 
 
 class economy(commands.Cog):
@@ -18,6 +19,7 @@ class economy(commands.Cog):
     
     @app_commands.command(name="beg", description="Beg the kitsune spirit for some donuts to eat!")
     @utils.check_blacklist()
+    @app_commands.checks.cooldown(1, 60)
     async def beg(self, interaction :discord.Interaction):
         db = await utils.connect_database()
         new_donuts = random_balance()
@@ -118,6 +120,102 @@ class economy(commands.Cog):
         except ValueError:
             pass
         return await interaction.response.send_message(embed=embed)
+
+
+    @app_commands.command(name="coinflip", description="Flip a coin and double the amount you put in or risk losing everything.")
+    @app_commands.choices(bet = [
+        Choice(name="Heads", value="1"),
+        Choice(name="Tails", value="2")
+    ])
+    @utils.check_blacklist()
+    async def coinflip(self, interaction : discord.Interaction, amount:int, bet:str):
+        db = await utils.connect_database()
+        balance = await db.execute("SELECT balance FROM economy WHERE userid = ?", (interaction.user.id,))
+        balance_check = await balance.fetchone()
+        flip_result = eg.coinflip()
+        won_embed = discord.Embed(title="Coinflip result", color = discord.Color.green())
+        loss_embed = discord.Embed(title="Coinflip result", color = discord.Color.red())
+        if int(balance_check[0]) < int(amount):
+            try:
+                await db.close()
+            except ValueError:
+                pass
+            return await interaction.response.send_message(f"You do not have enough donuts to flip a coin for {amount} Donut(s)")
+        else:
+            if flip_result == int(bet):
+                won_donuts = amount * 2
+                new_balance = int(balance_check[0]) + int(won_donuts)
+                await db.execute(f"UPDATE economy SET balance = {new_balance} WHERE userid = ?", (interaction.user.id,))
+                await db.commit()
+                won_embed.description = f"You won {won_donuts} and your new balance = `{new_balance}` Donut(s)"
+                try:
+                    await db.close()
+                except ValueError:
+                    pass
+                return await interaction.response.send_message(embed=won_embed)
+            if flip_result != int(bet):
+                new_balance = int(balance_check[0]) - int(amount)
+                await db.execute(f"UPDATE economy SET balance = {new_balance} WHERE userid = ?", (interaction.user.id,))
+                await db.commit()
+                text = ""
+                if bet == 1:
+                    text ="Heads"
+                elif bet == 2:
+                    text == "Tails"
+                loss_embed.description = f"Too bad, you lost {amount} donuts. Because you guessed for {text} but it was the opposite. Your new balance is `{new_balance}` Donut(s)"
+                try:
+                    await db.close()
+                except ValueError:
+                    pass
+                return await interaction.response.send_message(embed=loss_embed)
+            
+    @app_commands.command(name="mission", description="Go on a mission and either lose or win some donuts")
+    @utils.check_blacklist()
+    @app_commands.checks.cooldown(1, 60)
+    async def play_mission(self, interaction : discord.Interaction):
+        db = await utils.connect_database()
+        await asyncio.sleep(.5)
+        balance = await db.execute("SELECT balance FROM economy where userid = ?", (interaction.user.id,))
+        balance_result = await balance.fetchone()
+        embed = discord.Embed(title="Mission Result")
+        mission_outcome = mission_result()
+        donuts_won = random_mission_won()
+        donuts_lost = random_mission_loss()
+        mission_won_selector = mission_won_text()
+        mission_lost_selector = mission_loss_text()
+        mission_won_tts = f"m{mission_won_selector}"
+        mission_loss_tts = f"m{mission_lost_selector}"
+        
+
+        if mission_outcome == 1:
+            won_balance = int(balance_result[0]) + int(donuts_won)
+            embed.color = discord.Color.green()
+            query = f"UPDATE economy SET balance = {int(won_balance)} WHERE userid = {interaction.user.id}"
+            utils.print_warning_line(query)
+            await db.execute(query)
+            await db.commit()
+            embed.description = f"{str(eg.MissionsWon[mission_won_tts].value).format(donuts_won)}"
+            await asyncio.sleep(.5)
+            try:
+                await db.close()
+            except ValueError:
+                pass
+            return await interaction.response.send_message(embed = embed)
+        else:
+            loss_balance = int(balance_result[0]) - int(donuts_lost)
+            embed.color = discord.Color.red()
+            query = f"UPDATE economy SET balance = {int(loss_balance)} WHERE userid = {interaction.user.id}"
+            utils.print_warning_line(query)
+            await db.execute(query)
+            await db.commit()
+            embed.description = str((eg.MissionsLost[mission_loss_tts]).value).format(donuts_lost)
+            await asyncio.sleep(.5)
+            try:
+                await db.close()
+            except ValueError:
+                pass
+            return await interaction.response.send_message(embed= embed)
+
     ## Error handling
 
     @daily.error
@@ -140,7 +238,15 @@ class economy(commands.Cog):
         cooldown_time_clean = humanize.naturaldelta(cooldown_time)
         await interaction.channel.send(f"Hey {interaction.user.mention} listen up,  You can use /{interaction.command.name} again in {cooldown_time_clean}. Got it?")
 
-
+    @beg.error
+    async def on_beg_error(self, interaction : discord.Interaction, error: app_commands.AppCommandError):
+        err_msg = str(error)
+        new_msg = err_msg.replace("You are on cooldown. Try again in ", "")
+        new_msg_final = new_msg.replace("s", "")
+        seconds = float(new_msg_final)
+        cooldown_time = datetime.timedelta(seconds=seconds)
+        cooldown_time_clean = humanize.naturaldelta(cooldown_time)
+        await interaction.response.send_message(f"Hey stop begging so much, you know it is rude to beg right?", ephemeral=True)
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(economy(bot))

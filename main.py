@@ -123,9 +123,7 @@ async def sync(
             ret += 1
     await ctx.send(f"Synced the tree to {ret}/{len(guilds)}.")
 
-@kirikobot.command()
-async def help(ctx):
-    await ctx.reply("You can find all commands at https://little-fox.info/foxguard/documentation ")
+
 
 @kirikobot.listen()
 async def on_guild_join(guild:discord.Guild):
